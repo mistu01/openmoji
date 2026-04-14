@@ -3,6 +3,9 @@ name: Build And Release Noto Android Assets
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
+      - main
     tags:
       - "v*"
 
