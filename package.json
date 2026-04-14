@@ -24,6 +24,7 @@
     "pretty-src-svg": "./helpers/pretty-src-svg.sh",
     "export-svg": "./helpers/export-svg.sh",
     "export-png": "./helpers/export-png.sh",
+    "export-noto-android-assets": "./helpers/export-noto-android-assets.sh",
     "export-pdf": "./helpers/export-pdf.sh",
     "export-zip": "./helpers/export-zip.sh",
     "export-emojipedia": "./helpers/export-emojipedia.sh",
@@ -31,6 +32,8 @@
     "generate-data-tables": "node helpers/generate-data-tables.js",
     "generate": "./helpers/generate.sh",
     "generate-fonts": "./helpers/generate-fonts.sh",
+    "generate-noto-android-font": "./helpers/generate-noto-android-font.sh",
+    "release-noto-android": "./helpers/export-noto-android-release.sh",
     "cache-clear": "for ref in export-png-618 export-png-72 export-svg-color export-svg-skintones pretty-src-svg; do git update-ref -d refs/memos/$ref; done",
     "cc": "npm run cache-clear",
     "show-extras-hexcodes": "node helpers/show-extras-hexcodes.js"

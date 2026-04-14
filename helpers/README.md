@@ -9,6 +9,8 @@ This folder `helpers/` Contains various helper scripts e.g. to export to .png an
 
 - `npm run generate` generate everything
 - `npm run generate-fonts` generate the OpenMoji fonts
+- `npm run generate-noto-android-font` build the Android-compatible CBDT font for the Noto-style release pipeline
+- `npm run release-noto-android` generate the Noto-style PNG assets, build the CBDT font, and package the release bundles
 
 
 
@@ -17,6 +19,7 @@ This folder `helpers/` Contains various helper scripts e.g. to export to .png an
 - `clean.sh` cleans up the build directories
 - `npm run cache-clear` / `npm run cc` clears build system cache
 - `npm run export-emojipedia` export all OpenMojis to 512x512 png files for listing at Emojipedia
+- `npm run export-noto-android-assets` render all color SVGs to 160x160 PNGs named like `emoji_u1f600.png`
 - `npm run export-openmoji-ios` copies and updates all assets in the openmoji-ios repository
 - `npm run export-pdf` export all OpenMojis to pdf files
 - `npm run export-png` export all OpenMojis to 72x72 and 618x618 png files

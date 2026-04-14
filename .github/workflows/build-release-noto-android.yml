@@ -1,0 +1,61 @@
+name: Build And Release Noto Android Assets
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-noto-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends librsvg2-bin pngquant zip
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Resolve build version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME}"
+          else
+            version="manual-${GITHUB_SHA::7}"
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build Noto Android release bundle
+        run: ./helpers/export-noto-android-release.sh build/noto-android "${{ steps.version.outputs.value }}"
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmoji-noto-android-${{ steps.version.outputs.value }}
+          path: |
+            build/noto-android/release/*.zip
+            build/noto-android/font/OpenMoji-color-cbdt.ttf
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/noto-android/release/*.zip
+            build/noto-android/font/OpenMoji-color-cbdt.ttf
