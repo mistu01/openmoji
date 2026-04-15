@@ -40,9 +40,25 @@ jobs:
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             version="${GITHUB_REF_NAME}"
           else
-            version="manual-${GITHUB_SHA::7}"
+            version="latest"
           fi
           echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve release metadata
+        id: release
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "tag_name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            echo "release_name=OpenMoji Noto Android ${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "make_latest=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag_name=noto-android-latest" >> "$GITHUB_OUTPUT"
+            echo "release_name=OpenMoji Noto Android Latest" >> "$GITHUB_OUTPUT"
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "make_latest=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build Noto Android release bundle
         run: ./helpers/export-noto-android-release.sh build/noto-android "${{ steps.version.outputs.value }}"
@@ -56,9 +72,14 @@ jobs:
             build/noto-android/font/OpenMoji-color-cbdt.ttf
 
       - name: Publish GitHub release
-        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.release.outputs.tag_name }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.release.outputs.release_name }}
+          prerelease: ${{ steps.release.outputs.prerelease }}
+          make_latest: ${{ steps.release.outputs.make_latest }}
+          generate_release_notes: ${{ github.ref_type == 'tag' }}
           files: |
             build/noto-android/release/*.zip
             build/noto-android/font/OpenMoji-color-cbdt.ttf
